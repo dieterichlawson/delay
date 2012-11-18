@@ -1,0 +1,25 @@
+Airport Offset Table:
+  - update code to detect API limits (DONE?)
+  - look into deprecated fields
+  - update code to memoize certain reqs (DONE?)
+  - update download code to include country, and then filter by US airports
+  - give final offset table to Will
+Joining NOAA and BTS
+  - get WBAN -> Seq ID mapping ready for prime time
+  - Run Will's script to convert delay dataset to UTC
+  - Aggregate NOAA dataset, keyed by Sq ID and UTC time
+  - Join mothafucka
+Explorations
+  - look into how to handle categorical variables
+  - make sure dummyvar is working
+  - Naive Bayes + Laplace smoothing
+  - Logistic regression
+  - SVM
+Cluster setup
+  - set up the cluster
+The Big Leagues
+  Look into Distributed algorithms for
+    - Naive Bayes + Laplace smoothing
+    - Logistic Regression
+    - SVM
+    - Deep learning?
