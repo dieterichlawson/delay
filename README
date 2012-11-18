@@ -3,3 +3,5 @@ Directory Structure:
 scripts: various scripts for data munging
   airport_offset: scripts for generating airport lookup table with DST/GMT offsets
   download.rb: downloads the BTS dataset month by month
+
+milestone: various scripts/output for the project milestone
