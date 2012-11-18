@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'configliere'
+require 'set'
 
 Settings.use :commandline
 
@@ -29,11 +30,40 @@ def unzip(year, month, out_dir)
 end
 
 def post_process(year,month,out_dir)
-   puts "Postprocessing #{month}"
-   `sed -i '' 's/"//g' #{out_dir}/#{month}-#{year}.csv`  #remove quotes
-   `sed -i '' 's/,/	/g' #{out_dir}/#{month}-#{year}.csv` #remove commas
-   #`sed -i '' '1d' #{out_dir}/#{month}-#{year}.csv`      #remove header
-   `mv #{out_dir}/#{month}-#{year}.csv #{out_dir}/#{month}-#{year}.tsv`
+  puts "Postprocessing #{month}"
+  `sed -i '' 's/"//g' #{out_dir}/#{month}-#{year}.csv`  #remove quotes
+  #`sed -i '' 's/,/	/g' #{out_dir}/#{month}-#{year}.csv` #remove commas
+  `sed -i '' '1d' #{out_dir}/#{month}-#{year}.csv`      #remove header
+  #`mv #{out_dir}/#{month}-#{year}.csv #{out_dir}/#{month}-#{year}.tsv`
+  puts "Categorizing...."
+  categorize("#{out_dir}/#{month}-#{year}.csv", "#{out_dir}/#{month}-#{year}.csv.tmp",[3,4,5])
+end
+
+def categorize(in_file, out_file, columns)
+  f = open(in_file)
+  o = File.open(out_file, 'w')
+  types = {}
+  mappings = {}
+  columns.each do |column|
+    types[column] = Set.new
+    mappings[column] = {}
+  end
+  f.each_line do |line|
+    line = line.split(',')
+    columns.each do |column|
+      unless types[column].include? line[column]
+        types[column].add line[column]
+        mappings[column][line[column]] = types[column].size
+      end
+      line[column] = mappings[column][line[column]]
+    end
+    line.each_with_index do |col,index|
+      line[index] = "0.00" if col ==""
+    end
+    o.write(line.join(','))
+  end
+  o.close
+  f.close
 end
 
 if Settings.month.nil?
