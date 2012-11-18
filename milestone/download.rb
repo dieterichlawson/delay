@@ -2,6 +2,7 @@
 require 'configliere'
 require 'set'
 
+# Downloads a reduced version of the BTS dataset 
 Settings.use :commandline
 
 Settings.define :year, flag: 'y', description: 'Retrieve this year', type: Integer, default: 2012

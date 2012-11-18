@@ -2,6 +2,12 @@
 require 'configliere'
 require 'set'
 
+# Ingests the BTS data set and 'categorizes' the 
+# categorical variables. Basically, 'categorize'
+# counts the number of different categories in a 
+# given column and then replaces all the values
+# with numbers so that Matlab can easily digest them
+
 IN_FILE = "in.tsv"
 OUT_FILE = "out.tsv"
 COLUMNS = [3,4,5]
