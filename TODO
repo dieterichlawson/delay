@@ -1,9 +1,9 @@
 Airport Offset Table:
-  - update code to detect API limits (DONE?)
+  - update code to detect API limits (DONE - needs test)
   - look into deprecated fields
-  - update code to memoize certain reqs (DONE?)
-  - update download code to include country, and then filter by US airports
-  - give final offset table to Will
+  - update code to memoize certain reqs (DONE - needs test)
+  - include country in download, and then filter out non-US airports
+  - run script and give final offset table to Will
 Joining NOAA and BTS
   - get WBAN -> Seq ID mapping ready for prime time
   - Run Will's script to convert delay dataset to UTC
