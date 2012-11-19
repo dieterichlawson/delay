@@ -15,13 +15,21 @@ Settings.define :ignore_header, flag: 'i', description: "Ignore the first line o
 
 Settings.resolve!
 
-AIRPORT_ID = 1
-LAT = 3
-LONG = 4
-UTC_OFFSET = 5
+AIRPORT_SEQ_ID = 0
+COUNTRY = 1
+LAT = 2 
+LONG = 3 
 
-in = open(Settings.in_file)
-out = File.open(Settings.out_file,'w')
+in_file = open(Settings.in_file)
+out_file = File.open(Settings.out_file,'a')
+
+def increment_reqs
+  @reqs ||= 0
+  @reqs += 1
+  if @reqs % 100 == 0
+    puts "Made #{@reqs} requests"
+  end
+end
 
 def offset_to_s(offset)
   hrs = offset.to_i
@@ -30,42 +38,31 @@ def offset_to_s(offset)
 end
 
 def get_offsets(lat,long,airport_id)
-  @offsets_by_id ||={}
-  if @offsets_by_id.has_key? airport_id # we have it memoized
-    @offsets_by_id[airport_id]
-  else # we have to talk to geonames
-    response = Net::HTTP.get_response("api.geonames.org","/timezoneJSON?lat=#{lat}&lng=#{long}&username=dieterichlawson")
-    response = JSON.parse(response.body)
-    # check for errors
-    if response.has_key? 'message' and response.has_key? 'value'
-      if response['value'] == 15
-        puts "Hit hourly API limit..."
-      else
-        puts "Unknown API error occurred.\n Message:#{response['message']}\n value:#{response['value']}"
-      end
-      exit 
-    end
-    @offsets_by_id[airport_id] = [response["gmtOffset"],response["dstOffset"]]
-    @offsets_by_id[airport_id]
+  response = Net::HTTP.get_response("api.geonames.org","/timezoneJSON?lat=#{lat}&lng=#{long}&username=okkercat")
+  response = JSON.parse(response.body)
+  increment_reqs
+  # check for errors
+  if response.has_key? 'status'
+    puts "An API error occurred.\n Message: #{response['status']['message']}\n value: #{response['status']['value']}"
+    puts "Lat: #{lat} Long: #{long} airport ID: #{airport_id}"
+    return [nil, nil]
+  end
+  [offset_to_s(response["gmtOffset"]),offset_to_s(response["dstOffset"])]
+end
+
+in_file.gets if Settings.ignore_header
+
+# iterate through input file
+in_file.each_line do |line|
+  line = line.split(',')
+  next if line[COUNTRY] != "US"
+  gmtOffset, dstOffset = get_offsets(line[LAT],line[LONG],line[AIRPORT_SEQ_ID])
+  unless gmtOffset.nil? or dstOffset.nil?
+    out_file.puts [line[AIRPORT_SEQ_ID], gmtOffset, dstOffset].join("\t")
+    out_file.flush
   end
 end
 
-if Settings.ignore_header
-  #TODO: increment n by 1 line 
-end
-
-# iterate through input file
-in.each_line do |line|
-  next if #TODO: check if it's not USA
-  line = line.split(',')
-  gmtOffset, dstOffset = get_offsets(line[LAT],line[LONG],line[AIRPORT_ID])
-  # replace offset with geonames GMT offset
-  line[UTC_OFFSET] = offset_to_s(gmtOffset)
-  # add geonames DST offset
-  line.insert(UTC_OFFSET+1,offset_to_s(dstOffset))
-  out.write(line.join("\t"))
-end
-
 #cleanup
-in.close
-out.close
+in_file.close
+out_file.close
