@@ -26,8 +26,8 @@ def process line
    fl_date = Date.parse(line[4]) 
    year = fl_date.year
    state = line[10]
-   offset = @airCodes[state][0]
-   origin_state_fips = line[14]
+   offset = @airCodes[state][0] #set offset to standard UTC offset
+   origin_state_fips = line[12]
    if fl_date > DST[fl_date.year].first and fl_date < DST[fl_date.year].last and not @nonDSTstates.include?(origin_state_fips)
       offset = airCodes[state][1] 
    end
