@@ -7,6 +7,17 @@ require 'configliere'
 # Ingests the airport table and spits out
 # the same table but with dst / raw UTC offsets
 # added.
+#
+# Airport table should be in the format:
+# Airport Seq Id, Country Abbreviation, Latitude, Longitude
+# with all quotes removed
+#
+# Output is:
+# Aiport Seq Id, GMT offset, DST Offset
+#
+# WARNING: Geonames API only allows 2k reqs/hr for their
+# free accounts, so you will probably hit that limit
+# when generating this table.
 
 Settings.use :commandline
 Settings.define :in_file, description: "Input airport CSV file", default: "airports_raw.csv"
@@ -23,6 +34,9 @@ LONG = 3
 in_file = open(Settings.in_file)
 out_file = File.open(Settings.out_file,'a')
 
+# Increments the number of requests
+# made to the geonames API so that you
+# can track how close you are to the limit.
 def increment_reqs
   @reqs ||= 0
   @reqs += 1

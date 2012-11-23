@@ -10,6 +10,10 @@ Transform BTS data to UTC
   - Test script on a month or two
   - Wukong-ize script
   - After cluster setup, download all BTS data and run on cluster
+✓ Other postprocessing for BTS data
+  ✓ remove all cancelled flights
+  ✓ remove all diverted flights
+  ✓ add previous flight arrival delay
 Joining NOAA and BTS
   - get WBAN -> Seq ID mapping ready for prime time
   - Run Will's script to convert delay dataset to UTC
