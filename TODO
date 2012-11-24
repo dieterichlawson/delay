@@ -5,10 +5,11 @@
   ✓ include country in download, and then filter out non-US airports
   ✓ run script and give final offset table to Will
 Transform BTS data to UTC
-  - Ensure that download script has all necessary columns and no more
-  - write script that loads airport DST offset table into memory and transforms BTS data
-  - Test script on a month or two
-  - Wukong-ize script
+  ✓ Ensure that download script has all necessary columns and no more
+  ✓ write script that loads airport DST offset table into memory and transforms BTS data
+  ✓ Test script on a month or two
+  ✓ Wukong-ize script
+  - Manually double-check the transformation
   - After cluster setup, download all BTS data and run on cluster
 ✓ Other postprocessing for BTS data
   ✓ remove all cancelled flights
