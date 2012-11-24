@@ -1,39 +1,38 @@
 #!/usr/bin/env ruby
 
+load '/Users/dlaw/Desktop/delay/scripts/columns.rb'
+
 require 'wukong'
 require 'wukong/streamer/encoding_cleaner'
+require 'date'
 
 module ColumnReorderer
   class Mapper < Wukong::Streamer::RecordStreamer
     include Wukong::Streamer::EncodingCleaner
-    
+    include Columns::Raw
+
     def process *line
-      #remove cancelleds and diverteds
-      return if line[15].to_i == 1 or line[16].to_i == 1
+      #remove cancelled and diverted flights
+      return if line[CANCELLED].to_i == 1 or line[DIVERTED].to_i == 1
       result = []
-      result << line[0..3] #year through day_of_week
-      result << line[7] #origin
-      result << line[8] #destination
-      result << line[9] #sched_dep_time_local
-      result << line[13] #sched_arr_time_local
-      #TODO: Transform to UTC
-      result << line[17] #sched_elapsed_time
-      result << line[4..6] #unique_carrier through fl_num
-      result << line[18] #distance
-      result << line[14] #arr delay
-      result << line[10..12] #dep delay
-      yield ["#{line[0]}-#{line[1]}-#{line[2]}-#{line[5]}",result.flatten]
+      # reorder the columns
+      result << line[YEAR..DAY_OF_WEEK]
+      result << line[ORIGIN_AIRPORT..ORIGIN_FIPS] 
+      result << line[DEST_AIRPORT]
+      result << line[SCHED_DEP_TIME]
+      result << line[SCHED_ARR_TIME] 
+      result << line[SCHED_ELAPSED_TIME] 
+      result << line[CARRIER..FLIGHT_NUM] 
+      result << line[DISTANCE] 
+      result << line[ARR_DELAY] 
+      result << line[DEP_DELAY..DEP_DELAY_GROUP]
+      yield ["#{line[YEAR]}-#{line[MONTH]}-#{line[DAY]}-#{line[TAIL_NUM]}",result.flatten]
     end
   end
   class Reducer < Wukong::Streamer::ListReducer
-    # columns
-    SCHED_DEP_TIME = 7
-    ORIGIN_AIRPORT = 5 
-    DEST_AIRPORT = 6
-    TAIL_NUM = 11 
-    FLIGHT_NUM = 12
-    ARR_DELAY = 14
+    include Columns::Reordered
 
+    # Add previous flight delays
     def finalize
       values.sort! {|x,y| x[SCHED_DEP_TIME].to_i <=> y[SCHED_DEP_TIME].to_i }
       prev_dest = ''
@@ -46,7 +45,7 @@ module ColumnReorderer
         end
         prev_dest = flight[DEST_AIRPORT]
         prev_arr_delay = flight[ARR_DELAY]
-        [ARR_DELAY, FLIGHT_NUM, TAIL_NUM, 0].each { |index| flight.delete_at index }
+        [ARR_DELAY, FLIGHT_NUM, TAIL_NUM, KEY].each { |index| flight.delete_at(index)}
         yield flight
       end
     end
@@ -55,5 +54,5 @@ end
 
 Wukong::Script.new(
   ColumnReorderer::Mapper,
-  ColumnReorderer::Reducer,
+  ColumnReorderer::Reducer
 ).run
