@@ -1,6 +1,6 @@
 # Modules containing column index constants for different stages
-# in the transformation process. You should just include a module
-# wherever you need it
+# in the transformation process. You should just mix in a module
+# wherever you need it.
 module Columns 
   module Raw
     COLUMNS = [
