@@ -50,6 +50,7 @@ module FixTime
       @offsets = {}
       File.open(OFFSET_TABLE_FILE,'r') do |file|
         file.each_line do |line|
+          line = line[0..-2]
           line = line.split("\t")
           @offsets[line[0][0..-3].to_i] = [line[1],line[2]]
         end
@@ -60,9 +61,9 @@ module FixTime
       return false if NON_DST_FIPS.include? fips.to_i
       year = date.split('-')[0].to_i
       date = Date.parse(date)
-      if date > DST_RULES[year].first and date < DST_RULES[year].second
+      if date > DST_RULES[year].first and date < DST_RULES[year].last
         return true
-      elsif date < DST_RULES[year].first or date > DST_RULES[year].second
+      elsif date < DST_RULES[year].first or date > DST_RULES[year].last
         return false
       elsif date == DST_RULES[year].first
         return time.to_i >= 300 # Spring forward from 2:00 to 3:00
