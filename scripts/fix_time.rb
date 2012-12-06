@@ -10,7 +10,7 @@ module FixTime
     include Columns::PrevFlightDelayAdded
    
     # File containing airport_id => DST and GMT offset mapping
-    OFFSET_TABLE_FILE = '/home/dlaw/delay/airport_offset/airport_offsets.csv'
+    OFFSET_TABLE_FILE = '/home/dlaw/delay/scripts/airport_offset/airport_offsets.csv'
 
     # DST start and stop dates for the USA
     DST_RULES = {
