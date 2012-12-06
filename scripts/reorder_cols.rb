@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
-load '/home/dlaw/delay/scripts/columns.rb'
+$:.unshift "/home/dlaw/dev/wukong_og/lib"
+$:.unshift "/home/dlaw/dev/gorillib/lib"
+
+load "/home/dlaw/delay/scripts/columns.rb"
 
 require 'wukong'
 require 'wukong/streamer/encoding_cleaner'

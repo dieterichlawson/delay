@@ -2,7 +2,7 @@
 
 require 'wukong'
 require 'date'
-load '/Users/dlaw/Desktop/delay/scripts/columns.rb'
+load '/home/dlaw/delay/scripts/columns.rb'
 
 # Wukong script to transform all local times to UTC
 module FixTime
@@ -10,7 +10,7 @@ module FixTime
     include Columns::PrevFlightDelayAdded
    
     # File containing airport_id => DST and GMT offset mapping
-    OFFSET_TABLE_FILE = 'airport_offset/airport_offsets.csv'
+    OFFSET_TABLE_FILE = '/home/dlaw/delay/airport_offset/airport_offsets.csv'
 
     # DST start and stop dates for the USA
     DST_RULES = {
