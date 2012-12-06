@@ -33,11 +33,11 @@ end
 
 def post_process(year,month,out_dir)
    puts "Postprocessing #{month}"
-   `sed -i '' 's/"//g' #{out_dir}/#{month}-#{year}.csv`  #remove quotes
-   `sed -i '' 's/,$//g' #{out_dir}/#{month}-#{year}.csv`  #remove trailing commas
-   `sed -i '' '1d' #{out_dir}/#{month}-#{year}.csv` if Settings.remove_header  #remove header
+   `sed -i 's/"//g' #{out_dir}/#{month}-#{year}.csv`  #remove quotes
+   `sed -i 's/,$//g' #{out_dir}/#{month}-#{year}.csv`  #remove trailing commas
+   `sed -i '1d' #{out_dir}/#{month}-#{year}.csv` if Settings.remove_header  #remove header
    if Settings.to_tsv
-     `sed -i '' 's/,/	/g' #{out_dir}/#{month}-#{year}.csv` #remove commas
+     `sed -i 's/,/	/g' #{out_dir}/#{month}-#{year}.csv` #remove commas
      `mv #{out_dir}/#{month}-#{year}.csv #{out_dir}/#{month}-#{year}.tsv`
    end
 end

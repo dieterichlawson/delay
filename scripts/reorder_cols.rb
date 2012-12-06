@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-load '/Users/dlaw/Desktop/delay/scripts/columns.rb'
+load '/home/dlaw/delay/scripts/columns.rb'
 
 require 'wukong'
 require 'wukong/streamer/encoding_cleaner'
