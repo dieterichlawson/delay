@@ -48,6 +48,12 @@ def post_process(year,month,out_dir)
      puts "Concatenating #{month}"
      `cat #{filename} >> #{out_dir}/#{year}.tsv`
      `rm #{filename}`
+     if month == MONTHS.last
+       puts "Uploading #{year}.tsv to HDFS"
+       `hdp-put #{filename} /data/raw/#{year}.tsv`
+       puts "Uploaded... Deleting local file..."
+       `rm #{filename}`
+     end
    end
 end
 
